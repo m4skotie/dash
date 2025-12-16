@@ -2,6 +2,7 @@
 import { ToDoWidget } from './ToDoWidget.js';
 import { QuoteWidget } from './QuoteWidget.js';
 import { WeatherWidget } from './WeatherWidget.js';
+import { CurrencyWidget } from './CurrencyWidget.js';
 
 export class Dashboard {
   constructor(containerId) {
@@ -26,6 +27,9 @@ export class Dashboard {
       case 'weather':
         widget = new WeatherWidget(config);
         break;
+      case 'currency':
+        widget = new CurrencyWidget(config);
+        break;
       default:
         console.error('Unknown widget type:', type);
         return;
@@ -48,3 +52,4 @@ export class Dashboard {
     }
   }
 }
+
