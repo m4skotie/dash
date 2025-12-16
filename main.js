@@ -15,4 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('add-weather').addEventListener('click', () => {
     dashboard.addWidget('weather');
   });
+  
+  document.getElementById('add-currency').addEventListener('click', () => {
+    dashboard.addWidget('currency');
 });
+});
+
