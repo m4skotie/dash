@@ -8,20 +8,18 @@ export class UIComponent {
   }
 
   render() {
-    throw new Error('Метод render() должен быть переопределён в дочернем классе');
+    throw new Error('Метод render() должен быть реализован в дочернем классе');
   }
 
-  // Вспомогательный метод для привязки слушателей с сохранением ссылки
-  addEventListener(element, event, handler) {
+  addManagedListener(element, event, handler) {
     element.addEventListener(event, handler);
-    this.event.handlers.push({ element, event, handler });
+    this.eventHandlers.push({ element, event, handler });
   }
 
   destroy() {
-    if (this.element && this.element.parentNode) {
+    if (this.element?.parentNode) {
       this.element.parentNode.removeChild(this.element);
     }
-    // Удаляем все слушатели (если использовали addEventListener выше)
     this.eventHandlers.forEach(({ element, event, handler }) => {
       element.removeEventListener(event, handler);
     });
