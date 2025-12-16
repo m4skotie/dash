@@ -6,6 +6,9 @@ import { WeatherWidget } from './WeatherWidget.js';
 export class Dashboard {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
+    if (!this.container) {
+      throw new Error(`Container #${containerId} not found`);
+    }
     this.widgets = [];
   }
 
@@ -24,12 +27,17 @@ export class Dashboard {
         widget = new WeatherWidget(config);
         break;
       default:
-        throw new Error('Неизвестный тип виджета');
+        console.error('Unknown widget type:', type);
+        return;
     }
 
-    const element = widget.render();
-    this.container.appendChild(element);
-    this.widgets.push(widget);
+    try {
+      const element = widget.render(); // ← синхронно возвращает Node
+      this.container.appendChild(element);
+      this.widgets.push(widget);
+    } catch (err) {
+      console.error('Failed to render widget:', err);
+    }
   }
 
   removeWidget(widgetId) {
