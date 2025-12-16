@@ -30,7 +30,7 @@ h1 {
   margin: 0 0 24px;
   font-size: 2.2em;
   font-weight: 700;
-  background: linear-gradient(90deg, #ff6d1b, #ffd166);
+  background: linear-gradient(90deg, #ff3b30, #ff9e80);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -68,4 +68,5 @@ h1 {
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
+
 
