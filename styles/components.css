@@ -194,3 +194,14 @@ blockquote {
 .btn-refresh:hover {
   background: #e05a0d;
 }
+.currency-row {
+  display: flex;
+  justify-content: space-between;
+  margin: 12px 0;
+  font-size: 1.15em;
+  color: var(--text-primary);
+}
+
+.currency-row strong {
+  color: var(--accent);
+}
