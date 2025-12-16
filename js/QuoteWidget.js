@@ -1,23 +1,37 @@
 // js/QuoteWidget.js
 import { UIComponent } from './UIComponent.js';
 
+// Встроенный массив известных цитат на русском языке
+const RUSSIAN_QUOTES = [
+  { q: 'Жизнь — это то, что с тобой происходит, пока ты строишь планы.', a: 'Джон Леннон' },
+  { q: 'Не бойся медлить, бойся остановиться.', a: 'Китайская пословица' },
+  { q: 'Сделай шаг, и дорога появится сама.', a: 'Антуан де Сент-Экзюпери' },
+  { q: 'Всё, что нас не убивает, делает нас сильнее.', a: 'Фридрих Ницше' },
+  { q: 'Начни с малого, но мечтай о большем.', a: 'Сэм Уолтон' },
+  { q: 'Успех — это идти от неудачи к неудаче, не теряя энтузиазма.', a: 'Уinston Черчилль' },
+  { q: 'Лучший способ предсказать будущее — создать его самому.', a: 'Питер Друкер' },
+  { q: 'Терпение — ключ к успеху.', a: 'Саади' },
+  { q: 'Делай, что должен, и будь, что будет.', a: 'Фёдор Достоевский' },
+  { q: 'Кто не рискует, тот не пьёт шампанское.', a: 'Народная мудрость' }
+];
+
 export class QuoteWidget extends UIComponent {
   constructor(config = {}) {
-    super({ ...config, title: config.title || 'Цитата дня' });
+    super({ ...config, title: config.title || 'Цитата дня (RU)' });
   }
 
-  async loadQuote() {
+  getRandomQuote() {
+    const index = Math.floor(Math.random() * RUSSIAN_QUOTES.length);
+    return RUSSIAN_QUOTES[index];
+  }
+
+  loadQuote() {
     try {
-      // ZenQuotes — надёжный CORS-friendly API
-      const res = await fetch('https://zenquotes.io/api/random');
-      if (!res.ok) throw new Error('Network error');
-      const data = await res.json();
-      const quote = data[0].q; // текст цитаты
-      const author = data[0].a; // автор
+      const { q: quote, a: author } = this.getRandomQuote();
       this.updateContent(quote, author);
     } catch (err) {
-      this.updateContent('Вдохновение загружается...', '—');
-      console.error('Ошибка загрузки цитаты:', err);
+      this.updateContent('Вдохновение на подходе...', '—');
+      console.error('Ошибка выбора цитаты:', err);
     }
   }
 
@@ -37,9 +51,9 @@ export class QuoteWidget extends UIComponent {
         <button class="btn-close">×</button>
       </div>
       <div class="widget-body">
-        <blockquote>Загрузка вдохновения...</blockquote>
+        <blockquote>Загрузка мудрости...</blockquote>
         <p class="author">—</p>
-        <button class="btn-refresh">🔄 Обновить</button>
+        <button class="btn-refresh">🔄 Новая цитата</button>
       </div>
     `;
 
@@ -48,7 +62,7 @@ export class QuoteWidget extends UIComponent {
     this.addManagedListener(header.querySelector('.btn-minimize'), 'click', () => this.minimize());
     this.addManagedListener(this.element.querySelector('.btn-refresh'), 'click', () => this.loadQuote());
 
-    this.loadQuote();
+    this.loadQuote(); // синхронно, без fetch
     return this.element;
   }
 }
