@@ -30,30 +30,30 @@ export class ToDoWidget extends UIComponent {
     `;
 
     const header = this.element.querySelector('.widget-header');
-    header.querySelector('.btn-close').addEventListener('click', () => this.close());
-    header.querySelector('.btn-minimize').addEventListener('click', () => this.minimize());
+    this.addManagedListener(header.querySelector('.btn-close'), 'click', () => this.close());
+    this.addManagedListener(header.querySelector('.btn-minimize'), 'click', () => this.minimize());
 
     const input = this.element.querySelector('.task-input');
     const addButton = this.element.querySelector('.btn-add');
     const taskList = this.element.querySelector('.task-list');
 
-    addButton.addEventListener('click', () => this.addTask(input, taskList));
-    input.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') this.addTask(input, taskList);
+    const addTaskFromInput = () => {
+      const text = input.value.trim();
+      if (text) {
+        this.tasks.push({ id: Date.now(), text, done: false });
+        this.saveTasks();
+        input.value = '';
+        this.renderTasks(taskList);
+      }
+    };
+
+    this.addManagedListener(addButton, 'click', addTaskFromInput);
+    this.addManagedListener(input, 'keypress', (e) => {
+      if (e.key === 'Enter') addTaskFromInput();
     });
 
     this.renderTasks(taskList);
     return this.element;
-  }
-
-  addTask(input, taskList) {
-    const text = input.value.trim();
-    if (text) {
-      this.tasks.push({ id: Date.now(), text, done: false });
-      this.saveTasks();
-      input.value = '';
-      this.renderTasks(taskList);
-    }
   }
 
   renderTasks(taskList) {
@@ -69,9 +69,8 @@ export class ToDoWidget extends UIComponent {
       taskList.appendChild(li);
     });
 
-    // Обработчики для чекбоксов и удаления
     taskList.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-      cb.addEventListener('change', (e) => {
+      this.addManagedListener(cb, 'change', (e) => {
         const id = Number(e.target.dataset.id);
         const task = this.tasks.find(t => t.id === id);
         if (task) {
@@ -83,7 +82,7 @@ export class ToDoWidget extends UIComponent {
     });
 
     taskList.querySelectorAll('.btn-delete').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      this.addManagedListener(btn, 'click', (e) => {
         const id = Number(e.target.dataset.id);
         this.tasks = this.tasks.filter(t => t.id !== id);
         this.saveTasks();
@@ -93,7 +92,7 @@ export class ToDoWidget extends UIComponent {
   }
 
   destroy() {
-    super.destroy();
     localStorage.removeItem(`tasks-${this.id}`);
+    super.destroy();
   }
 }
