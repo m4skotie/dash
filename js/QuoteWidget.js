@@ -8,12 +8,16 @@ export class QuoteWidget extends UIComponent {
 
   async loadQuote() {
     try {
-      const res = await fetch('https://api.quotable.io/random');
+      // ZenQuotes — надёжный CORS-friendly API
+      const res = await fetch('https://zenquotes.io/api/random');
       if (!res.ok) throw new Error('Network error');
       const data = await res.json();
-      this.updateContent(data.content, data.author);
+      const quote = data[0].q; // текст цитаты
+      const author = data[0].a; // автор
+      this.updateContent(quote, author);
     } catch (err) {
-      this.updateContent('Не удалось загрузить цитату', '—');
+      this.updateContent('Вдохновение загружается...', '—');
+      console.error('Ошибка загрузки цитаты:', err);
     }
   }
 
@@ -33,7 +37,7 @@ export class QuoteWidget extends UIComponent {
         <button class="btn-close">×</button>
       </div>
       <div class="widget-body">
-        <blockquote>Загрузка...</blockquote>
+        <blockquote>Загрузка вдохновения...</blockquote>
         <p class="author">—</p>
         <button class="btn-refresh">🔄 Обновить</button>
       </div>
@@ -44,9 +48,7 @@ export class QuoteWidget extends UIComponent {
     this.addManagedListener(header.querySelector('.btn-minimize'), 'click', () => this.minimize());
     this.addManagedListener(this.element.querySelector('.btn-refresh'), 'click', () => this.loadQuote());
 
-    // Загружаем цитату
     this.loadQuote();
-
     return this.element;
   }
 }
