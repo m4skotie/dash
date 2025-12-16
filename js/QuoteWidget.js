@@ -4,25 +4,26 @@ import { UIComponent } from './UIComponent.js';
 export class QuoteWidget extends UIComponent {
   constructor(config = {}) {
     super({ ...config, title: config.title || 'Цитата дня' });
-    this.currentQuote = { content: 'Загрузка...', author: '' };
   }
 
-  async fetchQuote() {
+  async loadQuote() {
     try {
       const res = await fetch('https://api.quotable.io/random');
-      if (res.ok) {
-        this.currentQuote = await res.json();
-      } else {
-        this.currentQuote = { content: 'Не удалось загрузить цитату.', author: '' };
-      }
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+      this.updateContent(data.content, data.author);
     } catch (err) {
-      this.currentQuote = { content: 'Ошибка сети.', author: '' };
+      this.updateContent('Не удалось загрузить цитату', '—');
     }
   }
 
-  async render() {
-    await this.fetchQuote();
+  updateContent(quote, author) {
+    if (!this.element) return;
+    this.element.querySelector('blockquote').textContent = `"${quote}"`;
+    this.element.querySelector('.author').textContent = author || '—';
+  }
 
+  render() {
     this.element = document.createElement('div');
     this.element.className = 'widget quote-widget';
     this.element.innerHTML = `
@@ -32,22 +33,19 @@ export class QuoteWidget extends UIComponent {
         <button class="btn-close">×</button>
       </div>
       <div class="widget-body">
-        <blockquote>"${this.currentQuote.content}"</blockquote>
-        <p>— ${this.currentQuote.author || 'Неизвестный автор'}</p>
+        <blockquote>Загрузка...</blockquote>
+        <p class="author">—</p>
         <button class="btn-refresh">🔄 Обновить</button>
       </div>
     `;
 
     const header = this.element.querySelector('.widget-header');
-    header.querySelector('.btn-close').addEventListener('click', () => this.close());
-    header.querySelector('.btn-minimize').addEventListener('click', () => this.minimize());
+    this.addManagedListener(header.querySelector('.btn-close'), 'click', () => this.close());
+    this.addManagedListener(header.querySelector('.btn-minimize'), 'click', () => this.minimize());
+    this.addManagedListener(this.element.querySelector('.btn-refresh'), 'click', () => this.loadQuote());
 
-    const refreshBtn = this.element.querySelector('.btn-refresh');
-    refreshBtn.addEventListener('click', async () => {
-      await this.fetchQuote();
-      this.element.querySelector('blockquote').textContent = `"${this.currentQuote.content}"`;
-      this.element.querySelector('p').textContent = `— ${this.currentQuote.author || 'Неизвестный автор'}`;
-    });
+    // Загружаем цитату
+    this.loadQuote();
 
     return this.element;
   }
