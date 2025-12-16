@@ -3,21 +3,21 @@ import { UIComponent } from './UIComponent.js';
 
 export class WeatherWidget extends UIComponent {
   constructor(config = {}) {
-    super({ ...config, title: config.title || 'Погода (Москва)' });
+    super({ ...config, title: config.title || 'Погода (СПб)' });
   }
 
   async loadWeather() {
     try {
-      // Open-Meteo — открытый API без CORS проблем
+      // Координаты Санкт-Петербурга: 59.9343° N, 30.3351° E
       const res = await fetch(
         'https://api.open-meteo.com/v1/forecast?' +
-        'latitude=55.7558&longitude=37.6176&' +
+        'latitude=59.9343&longitude=30.3351&' +
         'current=temperature_2m&temperature_unit=celsius'
       );
       if (!res.ok) throw new Error('Weather API error');
       const data = await res.json();
       const temp = Math.round(data.current.temperature_2m);
-      this.updateContent(`${temp}°C`, 'Москва');
+      this.updateContent(`${temp}°C`, 'Санкт-Петербург');
     } catch (err) {
       this.updateContent('--°C', 'Ошибка загрузки');
     }
