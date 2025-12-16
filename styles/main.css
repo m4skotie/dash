@@ -12,9 +12,9 @@
   --text-primary: #e0e0e0;
   --text-secondary: #aaaaaa;
   --border: #3d3d3d;
-  --accent: #ff6d1b;
-  --success: #4caf50;
-  --danger: #f44336;
+  --accent: #ff3b30; /* Красный (Apple/Telegram style) */
+  --success: #34c759;
+  --danger: #ff3b30;
 }
 
 body {
@@ -68,3 +68,4 @@ h1 {
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;
 }
+
