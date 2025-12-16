@@ -1,9 +1,9 @@
+/* styles/components.css */
 .widget {
   background: white;
   border-radius: 10px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   overflow: hidden;
-  transition: all 0.3s ease;
 }
 
 .widget.minimized .widget-body {
@@ -21,21 +21,21 @@
 
 .widget-header h3 {
   font-size: 1.2em;
+  font-weight: 600;
 }
 
 .widget-header button {
   background: none;
   border: none;
   color: white;
-  font-size: 1.2em;
-  cursor: pointer;
+  font-size: 1.1em;
   width: 28px;
   height: 28px;
+  border-radius: 4px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 4px;
-  transition: background 0.2s;
 }
 
 .widget-header button:hover {
@@ -48,8 +48,8 @@
 
 /* ToDo */
 .task-list {
-  margin-top: 12px;
   list-style: none;
+  margin-top: 12px;
 }
 
 .task {
@@ -60,21 +60,21 @@
   border-bottom: 1px solid #eee;
 }
 
+.task span {
+  flex: 1;
+}
+
 .task.done span {
   text-decoration: line-through;
   color: #7f8c8d;
-}
-
-.task input[type="checkbox"] {
-  transform: scale(1.2);
 }
 
 .btn-delete {
   background: #e74c3c;
   color: white;
   border: none;
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   font-size: 12px;
   cursor: pointer;
@@ -86,6 +86,7 @@
 .input-group {
   display: flex;
   gap: 8px;
+  margin-bottom: 12px;
 }
 
 .input-group input {
@@ -107,13 +108,15 @@
 /* Quote */
 .quote-widget blockquote {
   font-style: italic;
-  margin: 10px 0;
+  margin: 12px 0;
   color: #2c3e50;
+  font-size: 1.1em;
 }
 
-.quote-widget p {
+.quote-widget .author {
   color: #7f8c8d;
-  margin-top: 4px;
+  margin-top: 6px;
+  display: block;
 }
 
 /* Weather */
@@ -123,7 +126,7 @@
 }
 
 .temp {
-  font-size: 2.5em;
+  font-size: 2.4em;
   font-weight: bold;
   color: #2980b9;
 }
@@ -134,13 +137,15 @@
   color: #7f8c8d;
 }
 
-/* Общие кнопки */
+/* Refresh buttons */
 .btn-refresh {
   background: #9b59b6;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
   width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+  margin-top: 12px;
 }
