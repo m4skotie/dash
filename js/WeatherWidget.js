@@ -3,34 +3,33 @@ import { UIComponent } from './UIComponent.js';
 
 export class WeatherWidget extends UIComponent {
   constructor(config = {}) {
-    super({ ...config, title: config.title || 'Погода сейчас' });
-    this.weather = { temp: '--', location: 'Определяем местоположение...' };
+    super({ ...config, title: config.title || 'Погода (Москва)' });
   }
 
-  async fetchWeather() {
+  async loadWeather() {
     try {
-      // Получаем координаты по IP
-      const geoRes = await fetch('https://ipapi.co/json/');
-      const geo = await geoRes.json();
-      if (!geo.latitude || !geo.longitude) throw new Error('No geo');
-
-      // Получаем погоду
-      const weatherUrl = `https://api.open-meteo.com/v1/forecast?latitude=${geo.latitude}&longitude=${geo.longitude}&current=temperature_2m&temperature_unit=celsius&timezone=auto`;
-      const weatherRes = await fetch(weatherUrl);
-      const weather = await weatherRes.json();
-
-      this.weather = {
-        temp: Math.round(weather.current.temperature_2m),
-        location: geo.city || `${geo.country_name}`
-      };
+      // Open-Meteo — открытый API без CORS проблем
+      const res = await fetch(
+        'https://api.open-meteo.com/v1/forecast?' +
+        'latitude=55.7558&longitude=37.6176&' +
+        'current=temperature_2m&temperature_unit=celsius'
+      );
+      if (!res.ok) throw new Error('Weather API error');
+      const data = await res.json();
+      const temp = Math.round(data.current.temperature_2m);
+      this.updateContent(`${temp}°C`, 'Москва');
     } catch (err) {
-      this.weather = { temp: '--', location: 'Ошибка загрузки' };
+      this.updateContent('--°C', 'Ошибка загрузки');
     }
   }
 
-  async render() {
-    await this.fetchWeather();
+  updateContent(temp, location) {
+    if (!this.element) return;
+    this.element.querySelector('.temp').textContent = temp;
+    this.element.querySelector('.location').textContent = location;
+  }
 
+  render() {
     this.element = document.createElement('div');
     this.element.className = 'widget weather-widget';
     this.element.innerHTML = `
@@ -41,24 +40,19 @@ export class WeatherWidget extends UIComponent {
       </div>
       <div class="widget-body">
         <div class="weather-info">
-          <span class="temp">${this.weather.temp}°C</span>
-          <span class="location">${this.weather.location}</span>
+          <span class="temp">--°C</span>
+          <span class="location">Загрузка...</span>
         </div>
         <button class="btn-refresh">🔄 Обновить</button>
       </div>
     `;
 
     const header = this.element.querySelector('.widget-header');
-    header.querySelector('.btn-close').addEventListener('click', () => this.close());
-    header.querySelector('.btn-minimize').addEventListener('click', () => this.minimize());
+    this.addManagedListener(header.querySelector('.btn-close'), 'click', () => this.close());
+    this.addManagedListener(header.querySelector('.btn-minimize'), 'click', () => this.minimize());
+    this.addManagedListener(this.element.querySelector('.btn-refresh'), 'click', () => this.loadWeather());
 
-    const refreshBtn = this.element.querySelector('.btn-refresh');
-    refreshBtn.addEventListener('click', async () => {
-      await this.fetchWeather();
-      this.element.querySelector('.temp').textContent = `${this.weather.temp}°C`;
-      this.element.querySelector('.location').textContent = this.weather.location;
-    });
-
+    this.loadWeather();
     return this.element;
   }
 }
