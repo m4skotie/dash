@@ -23,7 +23,7 @@ export class ToDoWidget extends UIComponent {
       <div class="widget-body">
         <div class="input-group">
           <input type="text" placeholder="Новая задача..." class="task-input">
-          <button class="btn-add">➕</button>
+          <button class="btn-add">✚</button>
         </div>
         <ul class="task-list"></ul>
       </div>
@@ -96,3 +96,4 @@ export class ToDoWidget extends UIComponent {
     super.destroy();
   }
 }
+
