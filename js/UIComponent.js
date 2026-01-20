@@ -25,9 +25,16 @@ export class UIComponent {
     });
     this.eventHandlers = [];
   }
+  
+  minimize() {
+    if (this.element) {
+      this.element.classList.toggle('minimized');
+    }
+  }
 
   close() {
     this.destroy();
   }
 }
+
 
